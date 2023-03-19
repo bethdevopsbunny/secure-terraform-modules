@@ -1,6 +1,6 @@
 version: 2.1
 jobs:
-  security_analysis:
+  security_analysis_gke_kubernetes_cluster_terraform:
     docker:
       - image: aquasec/tfsec-alpine:latest
     steps:
@@ -8,12 +8,20 @@ jobs:
       - run:
           name: Terraform security analysis - gke-kubernetes-cluster-terraform
           command: tfsec gke-kubernetes-cluster-terraform -m HIGH --no-code -e google-gke-enforce-pod-security-policy,google-gke-node-metadata-security
+
+  security_analysis_gcp_scc_webscan_terraform:
+    docker:
+      - image: aquasec/tfsec-alpine:latest
+    steps:
+      - checkout
       - run:
           name: Terraform security analysis - gcp-scc-webscan-terraform
           command: tfsec gcp-scc-webscan-terraform -m HIGH --no-code
+
 
 workflows:
   version: 2
   build:
     jobs:
-      - security_analysis
+      - security_analysis_gke_kubernetes_cluster_terraform
+      - security_analysis_gcp_scc_webscan_terraform
